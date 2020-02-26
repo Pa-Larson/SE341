@@ -1,6 +1,6 @@
 from tkinter import *
+import pymysql.cursors
 import NoteClass
-
 
 def scheduler(username):
     # Makes the screen
@@ -19,12 +19,25 @@ def scheduler(username):
     scrollbar.pack(side="right", fill="y")                                              # tells where the scroll bar should go
 
     # Get /declare the Callback Notes from the Database
-    
-    # Populates the Listbox with Callback Notes
-    for i in range(len(listSJF)):                                               #Initializes the listbox
-        nextLB.insert("end", getOrder(i, listSJF))
+    database = pymysql.connect(host="callbackinstance.clmbtzcmhna9.us-east-2.rds.amazonaws.com",
+                               user="admin",
+                               password="se3412020",
+                               db="callbackDb",
+                               charset="latin1",
+                               cursorclass=pymysql.cursors.DictCursor)
 
+    try:
+        with database.cursor() as cursor:
+            cursor.execute("SELECT * FROM studentNotes")
+            notes = cursor.fetchall()
+    finally:
+        database.close()
 
-    makeScrollBar(screen)
+    nextLB.insert(END, "Student ID")
+    for row in notes:
+        nextLB.insert(END, row["student_id"])
+
+    nextLB.pack()
+    #makeScrollBar(screen)
 
     screen.mainloop() 
