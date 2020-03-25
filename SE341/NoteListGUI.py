@@ -1,6 +1,21 @@
 from tkinter import *
 import pymysql.cursors
-import NoteClass
+
+
+def listToString(list):
+    str1 = ""
+    for i in list:
+        str1 += str(i)
+
+    return str1
+
+
+def viewNote(event):
+    w = event.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    print ('You selected item %d: "%s"' % (index, value))
+
 
 def scheduler(username):
     # Makes the screen
@@ -33,11 +48,20 @@ def scheduler(username):
     finally:
         database.close()
 
-    nextLB.insert(END, "Student ID")
+    nextLB.insert(END, "Student ID\tName\t\t\tStatus")
     for row in notes:
-        nextLB.insert(END, row["student_id"])
+        status = str(row["status"])
+        if status == "1":
+            status = "Open"
+        else:
+            status = "Closed"
+
+        rowList = [str(row["student_id"]), "   \t", str(row["first_name"]),
+                   " ", str(row["last_name"]), " \t", status]
+        rowString = listToString(rowList)
+        nextLB.insert(END, rowString)
 
     nextLB.pack()
-    #makeScrollBar(screen)
+    nextLB.bind('<Double-Button>', viewNote)
 
-    screen.mainloop() 
+    screen.mainloop()

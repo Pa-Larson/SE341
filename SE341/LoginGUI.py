@@ -37,7 +37,7 @@ def loginScreen(): # Displays the login screen
 
 # A request prompt for user password
   Label(screen, text = "Password * ").pack()
-  password_entry =  Entry(screen, textvariable = inputPW)
+  password_entry =  Entry(screen, show = "*", textvariable = inputPW)
   password_entry.pack()
 
 # Input text field for passward, which gets verified
