@@ -1,14 +1,14 @@
 from tkinter import *
-
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 import pymysql.cursors
 import Note
 import NoteList
 from functools import partial
-## login screen
-# global username
-# username = StringVar()
 
+# broswer = webdriver.Chrome('C:\Users\larso\Documents\GitHub\SE341\chromedriver')
 
+# ======================================================
 def loginScreen():
     # Variable for the Screen GUI
     userPW = "1234"
@@ -49,6 +49,7 @@ def loginScreen():
 
     screen.mainloop()  # Loop / checks for user's update every frame.
 
+# ======================================================
 def loginButtonClicked(PwEntryObject, userPW, screen,usernameEntryObject):
     if PwEntryObject.get() == userPW:
         #screen.destroy()
@@ -58,7 +59,7 @@ def loginButtonClicked(PwEntryObject, userPW, screen,usernameEntryObject):
         Label(screen, text="Invalid username / password", fg="red", font=("calibri", 11)).pack()
         return
 
-
+# ======================================================
 ## Main menu
 def mainMenu(root):
     root.destroy()
@@ -100,6 +101,7 @@ def mainMenu(root):
 
     screen.mainloop()
 
+# ======================================================
 def formatText(StudentName, sID, nID):
     s = "                                                                                                              "
     s = s[:2] + StudentName + s[2:]
@@ -151,9 +153,8 @@ def clearEntries():
         e.delete(0,END)
 
 ## View note page
+# ======================================================
 def viewNote(noteID):
-
-
     #root.destroy()
     screen = Tk()  # Declares it as a Tk GUI
     screen.geometry("500x500")  # The dimensions
@@ -185,15 +186,29 @@ def viewNote(noteID):
 
 
 
-    b1 = Button(screen, text='   Go Back   ',command = partial(mainMenu, screen))
+    b1 = Button(screen, text='         Go Back        ',command = partial(mainMenu, screen))
     b1.pack(side=LEFT, padx=5, pady=5)
     b2 = Button(screen, text='    Mark as complete    ')
     b2.pack(side=LEFT, padx=5, pady=5)
+    b3 = Button(screen, text='   IMPACT Registration  ', command=partial(register, theStudent))
+    b3.pack(side=LEFT, padx=5, pady=5)
+
+# ======================================================
+def register(theStudent):
+    # IMPORTANT: change this directory to wherever 'chromedriver' is stored
+    broswer = webdriver.Chrome(r'C:\Users\larso\Documents\GitHub\SE341\chromedriver')
+    broswer.get(r'https://mnscu.rschooltoday.com/familyaccount/family/editpublicstudent/public/1')
+
+    # Finds the elements of IMPACT registration and fills the fields
+    broswer.find_element_by_id(r'student[first_name]').send_keys(theStudent.firstname)
+    broswer.find_element_by_id(r'student[last_name]').send_keys(theStudent.lastname)
+    broswer.find_element_by_id(r'student[daytime_phone]').send_keys(str(theStudent.phonenumber))
+    broswer.find_element_by_id(r'student[home_phone]').send_keys(theStudent.phonenumber)
+    broswer.find_element_by_id(r'student[address]').send_keys(theStudent.address)
+    Select(broswer.find_element_by_id(r'studentstate')).select_by_value(r"MN")
 
 
-
-
-##Create global variables
+# Create global variables
 def createGlobals():
     global entries
     entries = []
